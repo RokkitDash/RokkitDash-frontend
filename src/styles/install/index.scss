@@ -1,0 +1,47 @@
+#root {
+	height: 100%;
+}
+.db-input {
+	visibility: visible;
+	margin-top: 15px;
+}
+
+.install-h4 {
+	margin-top: 5px;
+	font-size: 18px;
+}
+
+.accordion {
+	width: 50%;
+	margin: 15px auto !important;
+	background-color: rgb(40, 40, 40) !important;
+	color: white !important;
+}
+
+.port-input {
+	width: 12.5%;
+	margin-left: 5px !important;
+}
+
+//Overrides for existing classes
+.Mui-expanded {
+	flex-grow: 1;
+}
+.MuiAccordionDetails-root {
+	display: block !important;
+}
+.MuiInputBase-input {
+	color: rgb(220, 220, 220) !important;
+}
+.MuiInputLabel-outlined {
+	color: rgb(200, 200, 200) !important;
+}
+.MuiOutlinedInput-notchedOutline {
+	border-color: rgba(200, 200, 200, 0.5) !important;
+}
+.MuiRadio-root {
+	color: rgb(200, 200, 200) !important;
+}
+.MuiInput-underline:before {
+	border-color: rgb(200, 200, 200) !important;
+}

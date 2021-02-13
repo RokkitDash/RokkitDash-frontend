@@ -1,26 +1,65 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, useEffect, useState } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import Loading from "./components/Loading";
+import Install from "./pages/Install";
+import Panel from "./pages/Panel";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface Props {
+
 }
 
-export default App;
+interface State {
+	mode: string;
+}
+
+export default class App extends Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+
+		this.getMode = this.getMode.bind(this);
+	
+		this.state = {
+			mode: "loading"
+		}
+	}
+
+	//TODO: Better network calls
+	async getMode() {
+		const res = await fetch("/api/mode");
+		const { mode } = await res.json();
+		this.setState({ mode });
+	}
+
+	async componentDidMount() {
+		//await this.getMode();
+		this.setState({ mode: "install" });
+	}
+
+	render() {
+		switch(this.state.mode) {
+			case "loading":
+				return <Loading />;
+			case "install":
+				return <Install />;
+			case "panel":
+				return <Panel />;
+			default:
+				return <h1>Unknown mode</h1>;
+		}
+	}
+}
+
+// return (
+// 	<div>
+// 		<BrowserRouter>
+// 			<Switch>
+// 				<Route path="/install" exact={true}>
+// 					<Install />
+// 				</Route>
+// 				<Route path="/" exact={true}>
+// 					<h1>Hello, World!</h1>
+// 				</Route>
+// 			</Switch>
+// 		</BrowserRouter>
+// 	</div>
+// );

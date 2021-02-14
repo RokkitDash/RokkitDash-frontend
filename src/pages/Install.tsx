@@ -2,32 +2,25 @@ import React, { Component } from "react";
 import { Select, MenuItem, TextField, Typography, AccordionSummary, Accordion, AccordionDetails, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDatabase, faGlobe, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faDatabase, faGlobe, faUser, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
 
 }
 
-interface InstallDatabaseConfig {
-	type?: string;
-	host?: string;
-	port?: number;
-	username?: string;
-	password?: string;
-}
-
-interface LoginConfig {
-	username?: string;
-	password?: string;
-}
-
-interface InstallConfig {
-	database?: InstallDatabaseConfig;
-	login?: LoginConfig;
-}
-
 interface State {
-	config: InstallConfig;
+	dbType?: "mysql" | "mariadb" | "postgres" | "mssql";
+	dbHost?: string;
+	dbPort?: number;
+	dbUsername?: string;
+	dbPassword?: string;
+
+	domainConfigure?: boolean;
+	domainName?: string;
+
+	loginUsername?: string;
+	loginPassword?: string;
+
 	expanded?: string;
 }
 
@@ -36,24 +29,20 @@ export default class Install extends Component<Props, State> {
 		super(props);
 
 		this.state = {
-			config: {
-				database: {
-					host: "",
-					port: 0,
-					type: "",
-					username: "",
-					password: ""
-				},
-				login: {
-					username: "admin",
-					password: ""
-				}
-			},
+			dbType: "mysql",
+			dbHost: "",
+			dbPort: 0,
+			dbUsername: "",
+			dbPassword: "",
+			domainConfigure: false,
+			domainName: "",
+			loginUsername: "admin",
+			loginPassword: "",
 			expanded: "dbPanel"
 		};
 
 		this.changePanel = this.changePanel.bind(this);
-		this.changeDatabaseConfigValue = this.changeDatabaseConfigValue.bind(this);
+		this.changeConfig = this.changeConfig.bind(this);
 	}
 
 	changePanel(panel: string) {
@@ -63,14 +52,10 @@ export default class Install extends Component<Props, State> {
 			});
 		}
 	}
-
-	changeDatabaseConfigValue(key: keyof InstallDatabaseConfig, value: any) {
+	
+	changeConfig<K extends keyof State>(key: K, value: State[K]) {
 		this.setState({
-			config :{
-				database: {
-					[key]: value
-				}
-			}
+			[key]: value
 		});
 	}
 
@@ -79,12 +64,11 @@ export default class Install extends Component<Props, State> {
 	}
 
 	render() {
-		console.log(this.state.config!.database!);
 		return (
 			<div className="install-root">
 				<h2 className="install-title">Welcome to RokkitDash</h2>
 				<h2 className="install-title-small">Installation</h2>
-				{/* TODO: REMOVE THIS */}
+
 				{/* Database setup */}
 				<Accordion className="accordion" expanded={this.state.expanded === "dbPanel"} onChange={this.changePanel("dbPanel")}>
 					<AccordionSummary
@@ -101,7 +85,7 @@ export default class Install extends Component<Props, State> {
 					<AccordionDetails>
 						<h4 className="install-h4">Database Configuration</h4>
 						<br />
-						<Select onChange={e => this.changeDatabaseConfigValue("type", e.target.value)} className="quarter-width-input" defaultValue={"mysql"}>
+						<Select onChange={e => this.changeConfig("dbType", e.target.value as State["dbType"])} className="quarter-width-input" defaultValue={"mysql"}>
 							<MenuItem value={"mysql"}>MySQL</MenuItem>
 							<MenuItem value={"mariadb"}>MariaDB</MenuItem>
 							<MenuItem value={"postgres"}>PostgreSQL</MenuItem>
@@ -111,14 +95,14 @@ export default class Install extends Component<Props, State> {
 						<br/>
 						<br/>
 
-						<TextField onChange={e => this.changeDatabaseConfigValue("host", e.target.value)} className="half-width-input" id="dbHost" label="Hostname" variant="outlined" />
-						<TextField onChange={e => this.changeDatabaseConfigValue("port", parseInt(e.target.value))} className="port-input" id="dbPort" label="Port" variant="outlined" />
+						<TextField onChange={e => this.changeConfig("dbHost", e.target.value)} className="half-width-input" id="dbHost" label="Hostname" variant="outlined" />
+						<TextField onChange={e => this.changeConfig("dbPort", parseInt(e.target.value))} className="port-input" id="dbPort" label="Port" variant="outlined" />
 
 						<br/>
 						<br/>
 
-						<TextField onChange={e => this.changeDatabaseConfigValue("username", e.target.value)} className="quarter-width-input" id="dbUsername" label="Username" variant="outlined" />
-						<TextField onChange={e => this.changeDatabaseConfigValue("password", e.target.value)} className="quarter-width-input floating-input" id="dbPassword" label="Password" type="password" autoComplete="current-password" variant="outlined" />
+						<TextField onChange={e => this.changeConfig("dbUsername", e.target.value)} className="quarter-width-input" id="dbUsername" label="Username" variant="outlined" />
+						<TextField onChange={e => this.changeConfig("dbPassword", e.target.value)} className="quarter-width-input floating-input" id="dbPassword" label="Password" type="password" autoComplete="current-password" variant="outlined" />
 					</AccordionDetails>
 				</Accordion>
 
@@ -138,9 +122,9 @@ export default class Install extends Component<Props, State> {
 					<AccordionDetails>
 					<FormControl component="fieldset">
 						<FormLabel component="legend"></FormLabel>
-							<RadioGroup aria-label="Root Domain">
-								<FormControlLabel value="configureDomain" control={<Radio color="primary" />} label="Configure" />
-								<FormControlLabel value="doNotConfigureDomain" control={<Radio color="primary" />} label="Don't Configure" />
+							<RadioGroup onChange={e => this.changeConfig("domainConfigure", e.target.value === "true")} aria-label="Root Domain">
+								<FormControlLabel value={true} control={<Radio color="primary" />} label="Configure" />
+								<FormControlLabel value={false} control={<Radio color="primary" />} label="Don't Configure" />
 							</RadioGroup>
 						</FormControl>
 					</AccordionDetails>
@@ -160,13 +144,38 @@ export default class Install extends Component<Props, State> {
 					<Typography className="accordion-subheading">User setup</Typography>
 					</AccordionSummary>
 					<AccordionDetails>
-						<TextField defaultValue={this.state.config!.login!.username!} className="half-width-input" id="userUsername" label="Username" variant="outlined" />
+						<TextField onChange={e => this.changeConfig("loginUsername", e.target.value)} defaultValue={this.state.loginUsername!} className="half-width-input" id="userUsername" label="Username" variant="outlined" />
 						<br/>
 						<br/>
-						<TextField className="half-width-input" id="userPassword" label="Password" type="password" autoComplete="current-password" variant="outlined" />
+						<TextField onChange={e => this.changeConfig("loginPassword", e.target.value)} className="half-width-input" id="userPassword" label="Password" type="password" autoComplete="current-password" variant="outlined" />
+					</AccordionDetails>
+				</Accordion>
+
+				{/*Confirm configuration*/}
+				<Accordion className="accordion" expanded={this.state.expanded === "confirmPanel"} onChange={this.changePanel("confirmPanel")}>
+					<AccordionSummary
+						expandIcon={<ExpandMore htmlColor="rgb(200, 200, 200)" />}
+						aria-controls="confirmPanel-content"
+						id="confirmPanel-header"
+					>
+					<Typography className="accordion-heading">
+						<FontAwesomeIcon icon={faCheck} className="icon-heading" /> 
+						Confirm
+					</Typography>
+					<Typography className="accordion-subheading">Confirm Details</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<h1>Database</h1>
+						<h2>Database Type: {this.state.dbType}</h2>
+						<h2>Database Host: {this.state.dbHost}</h2>
+						<h2>Database Port: {this.state.dbPort}</h2>
+						<h2>Database Username: {this.state.dbUsername}</h2>
+						<h2>Database Password: {hidePass(this.state.dbPassword!)}</h2>
 					</AccordionDetails>
 				</Accordion>
 			</div>
 		);
 	}
 }
+
+const hidePass = (pass: string) => "•".repeat(pass.length);

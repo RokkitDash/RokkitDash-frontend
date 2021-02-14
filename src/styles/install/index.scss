@@ -23,25 +23,46 @@
 	margin-left: 5px !important;
 }
 
+.install-button {
+	background-color: rgb(0, 220, 0) !important;
+	float: right;
+	margin-right: 10px !important;
+	margin-bottom: 10px !important;
+	&:hover {
+		background-color: rgb(0, 200, 0) !important;
+	}
+	.MuiButton-label {
+		//color: rgb(40, 40, 40) !important;
+		color: rgb(230, 230, 230) !important;
+	}
+}
+
+
 //Overrides for existing classes
 .Mui-expanded {
 	flex-grow: 1;
 }
+
 .MuiAccordionDetails-root {
 	display: block !important;
 }
+
 .MuiInputBase-input {
 	color: rgb(220, 220, 220) !important;
 }
+
 .MuiInputLabel-outlined {
 	color: rgb(200, 200, 200) !important;
 }
+
 .MuiOutlinedInput-notchedOutline {
 	border-color: rgba(200, 200, 200, 0.5) !important;
 }
+
 .MuiRadio-root {
 	color: rgb(200, 200, 200) !important;
 }
+
 .MuiInput-underline:before {
 	border-color: rgb(200, 200, 200) !important;
 }

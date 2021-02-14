@@ -51,15 +51,6 @@ export default class App extends Component<Props, State> {
 
 // return (
 // 	<div>
-// 		<BrowserRouter>
-// 			<Switch>
-// 				<Route path="/install" exact={true}>
-// 					<Install />
-// 				</Route>
-// 				<Route path="/" exact={true}>
-// 					<h1>Hello, World!</h1>
-// 				</Route>
-// 			</Switch>
-// 		</BrowserRouter>
+// 		
 // 	</div>
 // );

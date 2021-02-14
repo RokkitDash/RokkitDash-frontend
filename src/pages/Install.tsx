@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Select, MenuItem, TextField, Typography, AccordionSummary, Accordion, AccordionDetails, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@material-ui/core";
+import { Select, MenuItem, TextField, Typography, AccordionSummary, Accordion, AccordionDetails, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase, faGlobe, faUser, faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -172,6 +172,7 @@ export default class Install extends Component<Props, State> {
 						<h2>Database Username: {this.state.dbUsername}</h2>
 						<h2>Database Password: {hidePass(this.state.dbPassword!)}</h2>
 					</AccordionDetails>
+					<Button variant="contained" className="install-button">Install</Button>
 				</Accordion>
 			</div>
 		);
